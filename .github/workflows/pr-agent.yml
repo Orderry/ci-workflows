@@ -1,0 +1,25 @@
+name: PR-Agent review
+on:
+  workflow_call:
+
+jobs:
+  pr-agent-job:
+    if: ${{ github.event.sender.type != 'Bot' && ! startsWith(github.event.pull_request.head.ref, 'release/') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+      contents: write
+    name: Run pr agent auto code review
+    steps:
+      - name: PR Agent action step
+        id: pragent
+        uses: qodo-ai/pr-agent@main
+        env:
+          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "edited", "synchronize"]'
+          pr_reviewer.enable_review_labels_effort: false
+          pr_reviewer.final_update_message: false
+          config.model: "o4-mini"
+          config.fallback_models: "o4-mini"
