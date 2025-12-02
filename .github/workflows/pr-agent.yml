@@ -19,6 +19,7 @@ jobs:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "edited", "synchronize"]'
+          ignore.blob: '["**/.env"]'
           pr_reviewer.enable_review_labels_effort: false
           pr_reviewer.final_update_message: false
           config.model: "o4-mini"
