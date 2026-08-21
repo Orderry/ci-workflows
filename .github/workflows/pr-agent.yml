@@ -1,6 +1,9 @@
 name: PR-Agent review
 on:
   workflow_call:
+    secrets:
+      OPENAI_KEY:
+        required: true
 
 jobs:
   pr-agent-job:
