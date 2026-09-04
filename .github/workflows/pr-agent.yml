@@ -9,10 +9,16 @@ jobs:
   pr-agent-job:
     if: ${{ github.event.sender.type != 'Bot' && ! startsWith(github.event.pull_request.head.ref, 'release/') }}
     runs-on: ubuntu-latest
+
+    concurrency:
+      group: pr-agent-${{ github.repository }}-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: true
+
     permissions:
       issues: write
       pull-requests: write
-      contents: write
+      contents: read
+
     name: Run pr agent auto code review
     steps:
       - name: PR Agent action step
@@ -21,9 +27,16 @@ jobs:
         env:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "edited", "synchronize"]'
-          ignore.blob: '["**/.env"]'
+
+          # An unset auto_* flag means enabled, so `improve` has to be switched
+          # off explicitly. `describe` and `review` stay unset so a calling
+          # repository can choose in its own .pr_agent.toml.
+          github_action_config.auto_improve: "false"
+          github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "synchronize"]'
+
           pr_reviewer.enable_review_labels_effort: false
           pr_reviewer.final_update_message: false
+
           config.model: "o4-mini"
+          # Matches the primary so a run fails instead of escalating to a pricier model.
           config.fallback_models: "o4-mini"
