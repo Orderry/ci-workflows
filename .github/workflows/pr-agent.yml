@@ -2,7 +2,7 @@ name: PR-Agent review
 on:
   workflow_call:
     secrets:
-      OPENAI_KEY:
+      ANTHROPIC_KEY:
         required: true
 
 jobs:
@@ -25,7 +25,7 @@ jobs:
         id: pragent
         uses: qodo-ai/pr-agent@f6af7d77554ff8d26adffded077e6461329e92fa # v0.42.0
         env:
-          OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
+          anthropic.key: ${{ secrets.ANTHROPIC_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
           # An unset auto_* flag means enabled, so `improve` has to be switched
@@ -37,6 +37,10 @@ jobs:
           pr_reviewer.enable_review_labels_effort: false
           pr_reviewer.final_update_message: false
 
-          config.model: "o4-mini"
+          # /review asks for the regular model, /describe for the weak one
+          # (pr_reviewer.py ModelType.REGULAR, pr_description.py ModelType.WEAK),
+          # so the harder job gets the stronger model and summarising stays cheap.
+          config.model: "anthropic/claude-opus-5"
+          config.model_weak: "anthropic/claude-sonnet-5"
           # Matches the primary so a run fails instead of escalating to a pricier model.
-          config.fallback_models: "o4-mini"
+          config.fallback_models: "anthropic/claude-opus-5"
