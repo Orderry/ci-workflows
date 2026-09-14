@@ -36,6 +36,10 @@ jobs:
 
           pr_reviewer.enable_review_labels_effort: false
           pr_reviewer.final_update_message: false
+          # v0.45.0 cannot prove authorship under GITHUB_TOKEN and posts a new
+          # "Standalone PR Review" on every push. Off until the upstream fix ships.
+          pr_reviewer.persistent_finding_state: "false"
+          pr_reviewer.enable_review_coverage_footer: "false"
 
           config.model: "o4-mini"
           # Matches the primary so a run fails instead of escalating to a pricier model.
