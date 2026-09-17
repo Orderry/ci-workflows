@@ -28,13 +28,10 @@ jobs:
           OPENAI_KEY: ${{ secrets.OPENAI_KEY }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-          # An unset auto_* flag means enabled, so `improve` and `review` have to
-          # be switched off explicitly. `describe` stays unset so a calling
-          # repository can choose in its own .pr_agent.toml.
+          # An unset auto_* flag means enabled, so every action has to be switched off explicitly.
           github_action_config.auto_improve: "false"
-          # Review findings were mostly artifacts of the clipped diff (32k token budget),
-          # and v0.45.0 posts a new "Standalone PR Review" on every push.
           github_action_config.auto_review: "false"
+          github_action_config.auto_describe: "false"
           github_action_config.pr_actions: '["opened", "reopened", "ready_for_review", "review_requested", "synchronize"]'
 
           pr_reviewer.enable_review_labels_effort: false
